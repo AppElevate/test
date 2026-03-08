@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klipable — App Store Banners v4</title>
+<!--
+  FONT CHOICE: Manrope
+  Why: The closest Google Font equivalent to Apple SF Pro.
+  Same geometric humanist classification. Identical optical
+  metrics. Used by Figma, Linear, Notion's marketing pages.
+  Every headline will feel like it belongs on apple.com.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — Apple-level precision
+   Font    : Manrope (SF Pro's closest web twin)
+   Palette : #E8621A orange · #1D1D1F near-black
+             · #30D158 Apple green · #FBFAF8 warm white
+   Shadows : Always layered (near + far), never flat
+   Spacing : Everything on an 8px grid
+   Rules   : No element that doesn't earn its place.
+             Every pixel has a reason.
+═══════════════════════════════════════════ */
+:root {
+  /* Brand */
+  --o:     #E8621A;
+  --o-l:   #F07438;
+  --o-10:  rgba(232,98,26,.10);
+  --o-18:  rgba(232,98,26,.18);
+  --o-28:  rgba(232,98,26,.28);
+  --o-40:  rgba(232,98,26,.40);
+
+  /* Apple Neutrals (exact values from HIG) */
+  --ink:   #1D1D1F;
+  --gray1: #6E6E73;
+  --gray2: #AEAEB2;
+  --gray3: #D1D1D6;
+  --gray4: #E5E5EA;
+  --gray5: #F2F2F7;
+  --surf:  #FBFAF8;   /* warm off-white, not clinical */
+
+  /* Apple Dark */
+  --d0: #000000;
+  --d1: #0A0A0A;
+  --d2: #111111;
+  --d3: #1C1C1E;
+  --d4: #2C2C2E;
+  --d5: #3A3A3C;
+  --d6: #48484A;
+
+  /* Apple Green */
+  --g:    #30D158;
+  --g-10: rgba(48,209,88,.10);
+  --g-20: rgba(48,209,88,.20);
+
+  /* Typography */
+  --f: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+
+  /* Shadows — Apple uses near+far layering */
+  --sh-card:   0 2px 8px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  --sh-lift:   0 8px 24px rgba(0,0,0,.12), 0 24px 48px rgba(0,0,0,.09);
+  --sh-float:  0 16px 40px rgba(0,0,0,.18), 0 40px 80px rgba(0,0,0,.12);
+  --sh-phone:  0 24px 64px rgba(0,0,0,.40), 0 8px 24px rgba(0,0,0,.20);
+
+  /* The key magic — widget pop shadow */
+  --sh-widget: 0 -2px 12px rgba(232,98,26,.10),
+               0 8px 24px rgba(232,98,26,.20),
+               0 20px 56px rgba(0,0,0,.36),
+               0 40px 80px rgba(0,0,0,.22);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body {
+  font-family: var(--f);
+  background: var(--d1);
+  color: #fff;
+  padding: 56px 48px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── PAGE CHROME ── */
+.pg-eyebrow {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: var(--d6); margin-bottom: 6px;
+}
+.pg-h {
+  font-size: 30px; font-weight: 800;
+  letter-spacing: -.04em; color: #fff;
+  margin-bottom: 60px;
+}
+.pg-h b { color: var(--o); }
+
+.sec { margin-bottom: 80px; }
+.sec-lbl {
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: var(--d6); margin-bottom: 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.sec-lbl::after { content:''; flex:1; height:1px; background:var(--d3); }
+
+/* ── BANNER SHELL — 1600×900 export size ── */
+.banner {
+  width: 100%;
+  aspect-ratio: 1600 / 900;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  position: relative;
+}
+
+/* ── NOTES ── */
+.notes { margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.note { background:var(--d2); border:1px solid var(--d3); border-radius:10px; padding:13px 17px; }
+.nl { font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--o); margin-bottom:5px; }
+.nt { font-size:12.5px; color:var(--d6); line-height:1.55; }
+.nt b { color:#666; font-weight:600; }
+
+
+/* ═══════════════════════════════════════════
+   B A N N E R  1  —  H E R O
+   Technique: Klip-accurate browser frame.
+   Widget ESCAPES bottom — wide, heavy shadow,
+   casts onto dark background like product hero.
+   Widget content: exact Coupon Clip style.
+═══════════════════════════════════════════ */
+.b1 { background: var(--surf); }
+
+.b1-left {
+  width: 40%;
+  padding: 0 4% 0 6.5%;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+.b1-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--o-10);
+  border: 1px solid var(--o-18);
+  border-radius: 100px;
+  padding: 5px 13px 5px 6px;
+  width: fit-content;
+  margin-bottom: clamp(16px,2vw,24px);
+}
+.b1-chip-dot {
+  width: 19px; height: 19px;
+  background: var(--o); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9.5px; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+.b1-chip-t { font-size: 11px; font-weight: 600; color: var(--o); letter-spacing: -.01em; }
+
+.b1-h {
+  font-size: clamp(24px,3.2vw,46px);
+  font-weight: 800; line-height: 1.04;
+  letter-spacing: -.045em; color: var(--ink);
+  margin-bottom: clamp(14px,1.8vw,22px);
+}
+.b1-h em { font-style: normal; color: var(--o); }
+
+.b1-sub {
+  font-size: clamp(11px,1.2vw,15px);
+  font-weight: 400; line-height: 1.62;
+  color: var(--gray1); letter-spacing: -.01em;
+  max-width: 280px;
+  margin-bottom: clamp(22px,2.6vw,32px);
+}
+
+.b1-live {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--ink); border-radius: 100px;
+  padding: 8px 17px 8px 9px; width: fit-content;
+}
+.b1-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--g); flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--g-10);
+  animation: livepulse 2.8s ease-in-out infinite;
+}
+@keyframes livepulse {
+  0%,100% { box-shadow: 0 0 0 3px var(--g-10); }
+  50%      { box-shadow: 0 0 0 7px var(--g-20); }
+}
+.b1-live-t { font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,.65); letter-spacing: -.01em; }
+
+/* ── RIGHT — dark, browser frame + escaping widget ── */
+.b1-right {
+  width: 60%;
+  background: #111;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: visible; /* lets widget escape */
+}
+.b1-right::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 65% at 58% 30%, rgba(232,98,26,.15) 0%, transparent 58%),
+    radial-gradient(ellipse 30% 30% at 10% 85%, rgba(232,98,26,.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Browser frame wrapper — allows widget overflow */
+.b1-frame-wrap {
+  width: 72%;
+  position: relative; z-index: 3;
+  overflow: visible;
+}
+
+/* The browser window frame */
+.b1-browser {
+  background: #1E1E1E;
+  border-radius: clamp(14px,1.8vw,22px);
+  border: 2px solid #2E2E2E;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,.55),
+    0 8px 24px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Three dots bar */
+.b1-dots-bar {
+  background: #252525;
+  padding: clamp(7px,1vw,11px) clamp(12px,1.6vw,18px);
+  display: flex; align-items: center; gap: clamp(5px,.7vw,8px);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.b1-dot-c {
+  width: clamp(8px,1.1vw,13px); height: clamp(8px,1.1vw,13px);
+  border-radius: 50%;
+}
+
+/* Product screen inside browser */
+.b1-screen {
+  background: #fff;
+  display: flex;
+}
+
+/* Main product area */
+.b1-screen-main {
+  flex: 1; min-width: 0;
+}
+
+.b1-prod-img-area {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: linear-gradient(148deg, #F5F2EE 0%, #E8E4DC 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.b1-prod-img-area::before {
+  content: '';
+  position: absolute; top:0; left:0; right:0; height:40%;
+  background: linear-gradient(to bottom, rgba(255,255,255,.5), transparent);
+}
+.b1-shoe {
+  font-size: clamp(36px,6vw,72px);
+  transform: rotate(-14deg) translateY(6%);
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,.2));
+  position: relative; z-index:1;
+}
+
+.b1-prod-info {
+  padding: clamp(8px,1.1vw,14px) clamp(10px,1.4vw,16px) clamp(5px,.7vw,8px);
+  background: #fff;
+}
+.b1-prod-name {
+  font-size: clamp(9px,1.2vw,14px); font-weight: 700;
+  color: var(--ink); letter-spacing: -.02em; margin-bottom: 4px;
+}
+.b1-prices { display: flex; align-items: baseline; gap: clamp(6px,.8vw,10px); margin-bottom: clamp(5px,.65vw,7px); }
+.b1-price-green {
+  font-size: clamp(16px,2.2vw,26px); font-weight: 800;
+  color: #22863a; letter-spacing: -.04em; /* Shopify product page green */
+}
+.b1-price-old {
+  font-size: clamp(10px,1.3vw,15px); font-weight: 500;
+  color: #aaa; text-decoration: line-through;
+}
+.b1-stars { display: flex; gap: 2px; }
+.b1-star {
+  color: #D1D1D6;
+  font-size: clamp(9px,1.1vw,13px);
+}
+
+/* Thumbnail strip — right side of browser */
+.b1-thumbs {
+  width: clamp(36px,4.8vw,56px);
+  background: #fafafa;
+  border-left: 1px solid #f0f0f0;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: clamp(6px,.8vw,9px) clamp(4px,.55vw,6px);
+  gap: clamp(4px,.55vw,6px);
+}
+.b1-thumb {
+  width: 100%; aspect-ratio: 1;
+  background: linear-gradient(148deg,#F0EDE9,#E4E0DB);
+  border-radius: clamp(4px,.5vw,6px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(10px,1.4vw,16px);
+  border: 1px solid #e8e8e8;
+}
+.b1-thumb.active {
+  border: 2px solid var(--o);
+  background: rgba(232,98,26,.06);
+}
+
+/*
+  THE WIDGET — this is the hero.
+  Sits OUTSIDE .b1-browser overflow.
+  Wider than the frame (margin: 0 -12px).
+  Heavy composite shadow on dark background.
+  Exact Coupon Clip UI from screenshot.
+*/
+.b1-widget-escape {
+  position: relative; z-index: 10;
+  background: #fff;
+  margin: 0 clamp(-8px,-1.1vw,-14px); /* bleed wider than browser frame */
+  border-radius: 0 0 clamp(12px,1.6vw,18px) clamp(12px,1.6vw,18px);
+  border-top: 1px solid var(--gray4);
+  /* THE SIGNATURE SHADOW — casts onto dark bg */
+  box-shadow:
+    0 4px 0 rgba(232,98,26,.06),
+    0 10px 28px rgba(232,98,26,.18),
+    0 24px 56px rgba(0,0,0,.40),
+    0 48px 96px rgba(0,0,0,.24);
+  padding: clamp(10px,1.4vw,18px) clamp(14px,1.8vw,22px);
+}
+
+/* Coupon row — exact match to screenshot */
+.b1-coupon-row {
+  display: flex; align-items: center; gap: clamp(8px,1.1vw,14px);
+  margin-bottom: clamp(8px,1.1vw,14px);
+}
+.b1-coupon-tag {
+  background: var(--o); color: #fff;
+  font-size: clamp(10px,1.4vw,17px); font-weight: 800;
+  padding: clamp(8px,1.1vw,14px) clamp(20px,2.6vw,32px) clamp(8px,1.1vw,14px) clamp(14px,1.8vw,22px);
+  border-radius: clamp(5px,.65vw,7px);
+  /* Arrow notch pointing right */
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  flex-shrink: 0; letter-spacing: .01em;
+}
+.b1-coupon-applied {
+  display: flex; align-items: center; gap: clamp(7px,.95vw,12px); flex: 1;
+}
+.b1-green-check {
+  width: clamp(20px,2.7vw,32px); height: clamp(20px,2.7vw,32px);
+  border-radius: 50%; border: 2.5px solid var(--g);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.b1-green-check::after {
+  content: '';
+  width: clamp(8px,1.1vw,14px); height: clamp(8px,1.1vw,14px);
+  border-radius: 50%; background: var(--g);
+}
+.b1-applied-text {
+  font-size: clamp(12px,1.7vw,22px); font-weight: 800;
+  color: var(--g); letter-spacing: -.025em; line-height: 1;
+}
+
+/* Timer strip */
+.b1-timer-strip {
+  background: #F0FDF4;
+  border-radius: clamp(6px,.85vw,10px);
+  padding: clamp(7px,1vw,13px) clamp(10px,1.4vw,16px);
+  display: flex; align-items: center; gap: clamp(6px,.85vw,11px);
+  margin-bottom: clamp(8px,1.1vw,14px);
+}
+.b1-timer-icon { font-size: clamp(11px,1.5vw,18px); }
+.b1-timer-text {
+  font-size: clamp(9px,1.2vw,14px); font-weight: 600;
+  color: #15803D; letter-spacing: -.01em; flex: 1;
+}
+.b1-timer-chip {
+  background: var(--g); color: #fff;
+  font-size: clamp(9px,1.2vw,14px); font-weight: 800;
+  padding: clamp(3px,.42vw,5px) clamp(8px,1.1vw,13px);
+  border-radius: clamp(4px,.55vw,6px); letter-spacing: .02em;
+}
+
+/* Add to Cart button */
+.b1-atc {
+  background: #e8e8e8;
+  border-radius: clamp(7px,1vw,12px);
+  padding: clamp(9px,1.2vw,15px) clamp(14px,1.8vw,22px);
+  display: flex; align-items: center; justify-content: center; gap: clamp(7px,1vw,12px);
+  font-size: clamp(10px,1.3vw,16px); font-weight: 700;
+  color: #888; letter-spacing: -.01em;
+}
+.b1-atc-icon { font-size: clamp(12px,1.6vw,20px); }
+
+
+/* ═══════════════════════════════════════════
+   B A N N E R  2  —  3  W I D G E T  S T Y L E S
+   Fix: Full phone mockups, zero dead space.
+   Each card = browser bar + product img (flex:1)
+   + product info (fixed) + widget (fixed).
+   The phone fills the card. Always.
+═══════════════════════════════════════════ */
+.b2 {
+  background: var(--d1);
+  flex-direction: column;
+  padding: 5% 5.5% 4.5%;
+  overflow: hidden; position: relative;
+}
+.b2::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 42% 52% at 8% 100%, rgba(232,98,26,.09) 0%, transparent 52%),
+    radial-gradient(ellipse 22% 22% at 94% 6%,  rgba(232,98,26,.06) 0%, transparent 50%);
+}
+
+.b2-top {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 4%;
+  position: relative; z-index:2;
+  flex-shrink: 0;
+}
+.b2-h {
+  font-size: clamp(22px,3vw,42px); font-weight: 800;
+  letter-spacing: -.04em; line-height: 1.06; color: #fff;
+}
+.b2-h em { font-style:normal; color:var(--o); }
+.b2-sub {
+  font-size: clamp(9px,1vw,12.5px); font-weight: 400;
+  color: var(--d6); text-align:right; max-width:175px; line-height:1.5; letter-spacing:-.01em;
+}
+
+/* Three-column card grid — fills remaining vertical space */
+.b2-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: clamp(12px,1.7vw,20px);
+  position: relative; z-index:2;
+  flex: 1;
+  /* min-height 0 prevents overflow */
+  min-height: 0;
+}
+
+.b2-card {
+  background: var(--d3);
+  border-radius: clamp(11px,1.6vw,16px);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  border: 1px solid rgba(255,255,255,.05);
+  position: relative;
+  /* MUST fill height */
+  min-height: 0;
+}
+.b2-card::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:2px; background:var(--o); border-radius:2px 2px 0 0;
+}
+
+.b2-card-name {
+  padding: clamp(9px,1.2vw,14px) clamp(11px,1.5vw,16px) clamp(5px,.7vw,8px);
+  font-size: clamp(7.5px,.88vw,10.5px); font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--o);
+  flex-shrink: 0;
+}
+
+/* ── Mini phone — KEY FIX: fills available height ── */
+.mini-phone {
+  flex: 1; /* takes all remaining card height */
+  min-height: 0;
+  margin: 0 clamp(9px,1.3vw,14px) 0;
+  background: var(--d2);
+  border-radius: clamp(9px,1.3vw,14px);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 4px 18px rgba(0,0,0,.32);
+  display: flex; flex-direction: column;
+}
+
+.mp-bar {
+  background: #1a1a1a; flex-shrink:0;
+  padding: clamp(4px,.55vw,7px) clamp(8px,1.1vw,12px);
+  display: flex; gap:4px; align-items:center;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.mp-dot { width:5px; height:5px; border-radius:50%; }
+
+/* Product image — flex:1 means it fills all leftover space */
+.mp-img {
+  flex: 1; min-height: 0;
+  background: linear-gradient(150deg, #2a2726 0%, #1e1d1c 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.mp-img::after {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at 50% 15%, rgba(255,255,255,.07) 0%, transparent 60%);
+}
+.mp-emoji {
+  font-size: clamp(20px,3.2vw,42px);
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.4));
+  position: relative; z-index:1;
+}
+
+/* Product info — fixed height, compact */
+.mp-info {
+  flex-shrink: 0;
+  background: var(--d2);
+  padding: clamp(5px,.7vw,8px) clamp(8px,1.1vw,12px) clamp(3px,.4vw,5px);
+  border-top: 1px solid rgba(255,255,255,.04);
+}
+.mp-name {
+  font-size: clamp(7px,.9vw,11px); font-weight:700;
+  color: rgba(255,255,255,.82); letter-spacing:-.025em; margin-bottom:2px;
+}
+.mp-prices { display:flex; align-items:baseline; gap: clamp(4px,.5vw,6px); }
+.mp-new {
+  font-size: clamp(10px,1.4vw,17px); font-weight:800;
+  color: var(--o); letter-spacing:-.04em;
+}
+.mp-old {
+  font-size: clamp(7px,.85vw,10px); font-weight:500;
+  color: rgba(255,255,255,.22); text-decoration:line-through;
+}
+
+/* Widget inside mini phone — elevated with orange shadow */
+.mp-widget {
+  flex-shrink: 0;
+  margin: clamp(4px,.55vw,7px) clamp(6px,.85vw,10px) clamp(5px,.7vw,8px);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(232,98,26,.22);
+  border-radius: clamp(6px,.85vw,10px);
+  padding: clamp(6px,.85vw,10px) clamp(8px,1.1vw,12px);
+  /* Orange-tinted shadow = widget is the focal point */
+  box-shadow: 0 4px 14px rgba(232,98,26,.14), 0 8px 28px rgba(0,0,0,.24);
+  position: relative; z-index:2;
+}
+
+/* Card tagline at bottom */
+.b2-tagline {
+  flex-shrink: 0;
+  padding: clamp(7px,1vw,12px) clamp(11px,1.5vw,16px) clamp(9px,1.2vw,14px);
+  font-size: clamp(7.5px,.84vw,10px); font-weight:400;
+  color: var(--d6); font-style:italic; line-height:1.4; letter-spacing:-.01em;
+}
+
+/* ────────────────────────────────────────────
+   WIDGET INTERNALS — pixel-accurate to screenshots
+────────────────────────────────────────────
+
+   WIDGET 1 — Coupon Clip (Amazon US Style)
+   Screenshot: white card, "Offers" bold label,
+   orange "Coupon:" notch badge + checkbox + text,
+   "Read more" link below
+──────────────────────────────────────────── */
+
+/* mp-widget background for W1: white card feel */
+.mp-widget.w1 {
+  background: rgba(255,255,255,.96);
+}
+
+.wg1-header {
+  font-size: clamp(7px,.9vw,11px); font-weight:800;
+  color: var(--ink); letter-spacing:-.01em;
+  margin-bottom: clamp(5px,.68vw,8px);
+}
+.wg1-row { display:flex; align-items:center; gap: clamp(5px,.68vw,8px); margin-bottom: clamp(4px,.5vw,5px); }
+.wg1-badge {
+  background: var(--o); color: #fff;
+  font-size: clamp(6.5px,.86vw,10px); font-weight: 700;
+  padding: clamp(4px,.52vw,6px) clamp(14px,1.8vw,20px) clamp(4px,.52vw,6px) clamp(9px,1.15vw,13px);
+  border-radius: 3px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+  flex-shrink: 0; letter-spacing: .01em; white-space: nowrap;
+}
+.wg1-cb {
+  width: clamp(11px,1.4vw,16px); height: clamp(11px,1.4vw,16px);
+  border: 1.5px solid var(--gray3);
+  border-radius: clamp(2px,.28vw,3px);
+  flex-shrink: 0; background: #fff;
+}
+.wg1-t {
+  font-size: clamp(7px,.9vw,11px); font-weight:600;
+  color: var(--ink); letter-spacing:-.01em;
+}
+.wg1-readmore {
+  font-size: clamp(6.5px,.82vw,9.5px); font-weight:600;
+  color: var(--o); letter-spacing:-.01em;
+  text-decoration: none;
+}
+
+/*
+   WIDGET 2 — Offers Carousel
+   Screenshot: "% Offers" header (dotted circle icon),
+   scroll cards each showing:
+     "FREE (100% off)" in green bold
+     "Coupon: WAQHTJ8RC4EC" + copy icon
+     "Requirement: Spend $105 or more"
+   < > scroll arrows on sides
+*/
+.mp-widget.w2 {
+  background: rgba(255,255,255,.96);
+}
+
+.wg2-hdr { display:flex; align-items:center; gap: clamp(5px,.65vw,8px); margin-bottom: clamp(6px,.8vw,9px); }
+.wg2-icon {
+  width: clamp(13px,1.7vw,20px); height: clamp(13px,1.7vw,20px);
+  border: 1.5px dashed var(--o);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(6px,.78vw,9px); font-weight: 800; color: var(--o);
+  flex-shrink: 0;
+}
+.wg2-ht {
+  font-size: clamp(7.5px,.92vw,11px); font-weight:800;
+  color: var(--ink); letter-spacing:-.01em;
+}
+
+.wg2-scroll-wrap { display: flex; align-items: center; gap: clamp(4px,.52vw,6px); }
+.wg2-arr {
+  width: clamp(14px,1.8vw,20px); height: clamp(14px,1.8vw,20px);
+  border: 1px solid var(--gray3); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(7px,.88vw,10px); color: var(--gray1); flex-shrink: 0;
+}
+.wg2-card {
+  flex: 1; min-width: 0;
+  background: #fff;
+  border: 1px solid var(--gray4);
+  border-radius: clamp(6px,.8vw,9px);
+  padding: clamp(5px,.68vw,8px) clamp(7px,.92vw,11px);
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.wg2-free {
+  font-size: clamp(7.5px,.96vw,11.5px); font-weight:800;
+  color: #16A34A; /* dark green */
+  margin-bottom: clamp(2px,.28vw,3px);
+}
+.wg2-free span { color: var(--gray1); font-weight:500; }
+.wg2-coupon-row {
+  display: flex; align-items: center; gap: clamp(3px,.4vw,5px);
+  margin-bottom: clamp(2px,.28vw,3px);
+}
+.wg2-coupon-lbl {
+  font-size: clamp(6.5px,.82vw,9.5px); font-weight:600;
+  color: var(--gray1);
+}
+.wg2-coupon-code {
+  font-size: clamp(6.5px,.82vw,9.5px); font-weight:700;
+  color: var(--ink); font-family: monospace;
+}
+.wg2-copy-icon {
+  width: clamp(11px,1.4vw,16px); height: clamp(11px,1.4vw,16px);
+  border: 1px solid var(--gray3); border-radius: clamp(2px,.3vw,3px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(5.5px,.7vw,8px); color: var(--gray1);
+  flex-shrink: 0;
+}
+.wg2-req {
+  font-size: clamp(6px,.76vw,9px); color: var(--gray1);
+  font-weight: 400;
+}
+
+/*
+   WIDGET 3 — Deal Spotlight (WOW!DEAL)
+   Screenshot: white card,
+     Left: "WOW!DEAL" circle (dark border text)
+     Right: "Get at $0.00  ~~$105.00~~" (dark red + gray strikethrough)
+            "Coupon: WAQHTJ8RC4EC (Get $105+ - Get 1 Item FREE)" italic green
+     Far right: chevron ˅
+*/
+.mp-widget.w3 {
+  background: rgba(255,255,255,.96);
+}
+
+.wg3-card {
+  display: flex; align-items: center;
+  gap: clamp(7px,.92vw,11px);
+}
+.wg3-wow-circle {
+  width: clamp(24px,3.1vw,37px); height: clamp(24px,3.1vw,37px);
+  border: 2px solid #1a1a1a;
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex-shrink: 0; line-height: 1.05;
+}
+.wg3-wow-t {
+  font-size: clamp(3.5px,.46vw,5.5px); font-weight:900;
+  color: #1a1a1a; text-align:center; letter-spacing:.04em;
+}
+.wg3-body { flex: 1; min-width: 0; }
+.wg3-price-row { display: flex; align-items: baseline; gap: clamp(5px,.65vw,8px); margin-bottom: 2px; }
+.wg3-pnew {
+  font-size: clamp(9px,1.15vw,14px); font-weight:800;
+  color: #8B1A1A; /* dark red like screenshot */
+}
+.wg3-pold {
+  font-size: clamp(8px,1vw,12px); font-weight:500;
+  color: #E53E3E; text-decoration: line-through; /* red strikethrough */
+}
+.wg3-desc {
+  font-size: clamp(6px,.76vw,9px); font-weight:500;
+  color: #16A34A; font-style: italic;
+  letter-spacing:-.01em; line-height:1.3;
+}
+.wg3-desc b { font-family: monospace; font-style: normal; color: #16A34A; }
+.wg3-chevron {
+  font-size: clamp(8px,1vw,12px); color: var(--gray1); flex-shrink: 0;
+}
+
+
+/* ═══════════════════════════════════════════
+   B A N N E R  3  —  S Y N C
+═══════════════════════════════════════════ */
+.b3 { background: var(--surf); }
+
+.b3-left {
+  width: 37%;
+  background: #111;
+  padding: 7.5% 4.5%;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; overflow:hidden;
+}
+.b3-left::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse 55% 55% at 0% 90%, rgba(232,98,26,.13) 0%, transparent 55%);
+}
+
+.b3-eyebrow {
+  font-size: clamp(8px,.9vw,10.5px); font-weight:700;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--o);
+  margin-bottom: clamp(12px,1.5vw,18px); position:relative; z-index:2;
+}
+.b3-h {
+  font-size: clamp(18px,2.4vw,33px); font-weight:800;
+  letter-spacing:-.04em; line-height:1.08; color:#fff;
+  margin-bottom: clamp(10px,1.3vw,17px); position:relative; z-index:2;
+}
+.b3-h em { font-style:normal; color:var(--o); display:block; }
+.b3-sub {
+  font-size: clamp(9.5px,1.05vw,13px); font-weight:400;
+  color:var(--gray1); line-height:1.62; letter-spacing:-.01em;
+  max-width:228px; position:relative; z-index:2;
+}
+
+.b3-mid {
+  width:13%;
+  display:flex; align-items:center; justify-content:center;
+  background: var(--surf);
+}
+.b3-arrow { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.b3-arr-line {
+  width:1.5px; height: clamp(26px,3.8vw,46px);
+  background: linear-gradient(to bottom, transparent, var(--o));
+}
+.b3-arr-pill {
+  background:var(--o); color:#fff;
+  font-size: clamp(7px,.8vw,9.5px); font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  padding: clamp(5px,.7vw,7.5px) clamp(10px,1.3vw,15px);
+  border-radius:100px; white-space:nowrap;
+  box-shadow: 0 4px 16px var(--o-28);
+}
+.b3-arr-head { width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:8px solid var(--o); }
+
+.b3-right {
+  width:50%; padding:4.5% 3.5%;
+  display:flex; align-items:center; justify-content:center;
+}
+.b3-panels { display:grid; grid-template-columns:1fr 1fr; gap: clamp(8px,1.1vw,14px); width:100%; }
+.b3-panel { border-radius: clamp(8px,1.1vw,13px); overflow:hidden; border:1px solid var(--gray4); box-shadow:var(--sh-card); }
+.b3-ph {
+  padding: clamp(7px,1vw,10px) clamp(10px,1.3vw,15px);
+  display:flex; align-items:center; gap: clamp(5px,.65vw,7px);
+  border-bottom:1px solid var(--gray4);
+  font-size: clamp(8px,.88vw,10.5px); font-weight:700; letter-spacing:-.015em;
+}
+.b3-ph.sp { background:#F6F6F7; color:#555; }
+.b3-ph.kl { background:#FFF5EF; color:var(--o); border-bottom-color:rgba(232,98,26,.15); }
+.b3-ph-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.b3-pb { background:#fff; padding: clamp(4px,.55vw,7px) clamp(10px,1.3vw,15px); }
+.b3-row { display:flex; align-items:center; justify-content:space-between; padding: clamp(4.5px,.6vw,7px) 0; border-bottom:1px solid #F8F8F8; gap:5px; }
+.b3-row:last-child { border-bottom:none; }
+.b3-code { font-size: clamp(7.5px,.88vw,10.5px); font-weight:700; color:var(--ink); font-family:monospace; }
+.b3-type { font-size: clamp(6px,.72vw,8.5px); font-weight:500; color:var(--gray2); }
+.b3-wrow { display:flex; align-items:center; gap: clamp(4px,.55vw,7px); padding: clamp(4.5px,.6vw,7px) 0; border-bottom:1px solid #F8F8F8; }
+.b3-wrow:last-child { border-bottom:none; }
+.b3-wbdg {
+  background:var(--o); color:#fff;
+  font-size: clamp(5.5px,.67vw,8px); font-weight:700;
+  padding: 2px clamp(5px,.65vw,8px) 2px clamp(3.5px,.5vw,5.5px);
+  border-radius:2px; clip-path:polygon(0 0,calc(100% - 5px) 0,100% 50%,calc(100% - 5px) 100%,0 100%); flex-shrink:0;
+}
+.b3-wcode { font-size: clamp(7px,.83vw,10px); font-weight:700; color:var(--ink); font-family:monospace; }
+.b3-wval  { font-size: clamp(7px,.83vw,10px); font-weight:700; color:var(--g); margin-left:auto; }
+
+
+/* ═══════════════════════════════════════════
+   B A N N E R  4  —  CART + COLLECTION
+═══════════════════════════════════════════ */
+.b4 {
+  background: var(--d1);
+  flex-direction:column; padding:5% 5.5%; overflow:hidden; position:relative;
+}
+.b4::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 50% 46% at 88% 100%, rgba(232,98,26,.09) 0%, transparent 52%);
+}
+.b4-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:3.8%; position:relative; z-index:2; }
+.b4-h {
+  font-size: clamp(20px,2.8vw,38px); font-weight:800;
+  letter-spacing:-.04em; line-height:1.06; color:#fff;
+}
+.b4-h em { font-style:normal; color:var(--o); }
+.b4-assist {
+  background:var(--d3); border:1px solid var(--d4);
+  border-radius: clamp(8px,1.1vw,13px);
+  padding: clamp(9px,1.2vw,14px) clamp(13px,1.7vw,20px);
+  max-width:205px; text-align:right;
+}
+.b4-at { font-size: clamp(9px,.95vw,11.5px); font-weight:600; color:rgba(255,255,255,.58); margin-bottom:4px; letter-spacing:-.01em; }
+.b4-as { font-size: clamp(7.5px,.8vw,9.5px); font-weight:400; color:var(--d6); line-height:1.45; letter-spacing:-.01em; }
+
+.b4-screens { display:grid; grid-template-columns:1fr 1fr; gap: clamp(14px,2vw,24px); position:relative; z-index:2; flex:1; }
+
+/* Collection mock */
+.b4-mock { background:#fff; border-radius: clamp(10px,1.5vw,17px); overflow:hidden; box-shadow:var(--sh-float); display:flex; flex-direction:column; }
+.b4-topbar { background:#FAFAFA; padding: clamp(5px,.65vw,7.5px) clamp(10px,1.4vw,14px); display:flex; align-items:center; gap:5px; border-bottom:1px solid #F0F0F0; }
+.b4-dot { width:6px; height:6px; border-radius:50%; }
+.b4-pg-tag {
+  display:flex; align-items:center; gap:5px;
+  background:var(--o-10); border-radius:100px;
+  padding: clamp(3px,.45vw,5.5px) clamp(8px,1.1vw,11px) clamp(3px,.45vw,5.5px) clamp(5px,.65vw,7px);
+  margin: clamp(5px,.7vw,8px) clamp(10px,1.4vw,14px) clamp(3px,.4vw,5px); width:fit-content;
+}
+.b4-pg-dot { width:5px; height:5px; border-radius:50%; background:var(--o); }
+.b4-pg-t { font-size: clamp(7px,.8vw,9px); font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--o); }
+
+.b4-coll-grid { display:grid; grid-template-columns:1fr 1fr; gap: clamp(6px,.9vw,10px); padding: clamp(3px,.4vw,5px) clamp(10px,1.4vw,14px) clamp(9px,1.2vw,13px); flex:1; }
+.b4-ci { border:1px solid var(--gray4); border-radius: clamp(6px,.9vw,10px); overflow:hidden; }
+.b4-ci-img {
+  width:100%; aspect-ratio:1;
+  background:linear-gradient(148deg,#F6F4F1,#EAE7E2);
+  display:flex; align-items:center; justify-content:center;
+  font-size: clamp(18px,2.8vw,32px); position:relative;
+}
+.b4-ci-badge {
+  position:absolute; bottom: clamp(4px,.55vw,6.5px); left:50%; transform:translateX(-50%);
+  background:var(--o); color:#fff;
+  font-size: clamp(6.5px,.82vw,9.5px); font-weight:700;
+  padding: clamp(2.5px,.35vw,4px) clamp(8px,1.1vw,12px);
+  border-radius:100px; white-space:nowrap;
+  box-shadow: 0 3px 10px rgba(232,98,26,.42);
+}
+.b4-ci-inf { padding: clamp(4px,.6vw,7px) clamp(6px,.85vw,9px); border-top:1px solid #F5F5F5; }
+.b4-ci-nm { font-size: clamp(7px,.82vw,9.5px); font-weight:600; color:#333; margin-bottom:1px; letter-spacing:-.01em; }
+.b4-ci-pr { font-size: clamp(9px,1.1vw,12.5px); font-weight:800; color:var(--ink); letter-spacing:-.03em; }
+.b4-ci-op { font-size: clamp(6.5px,.78vw,9px); color:var(--gray2); text-decoration:line-through; margin-left:3px; }
+
+/* Cart mock */
+.b4-cart-body { padding: clamp(3px,.4vw,5px) clamp(10px,1.4vw,14px); flex:1; display:flex; flex-direction:column; gap: clamp(1px,.2vw,2px); }
+.b4-ci2 { display:flex; align-items:center; gap: clamp(7px,1vw,11px); padding: clamp(6px,.8vw,9px) 0; border-bottom:1px solid #F5F5F5; }
+.b4-ci2:last-of-type { border-bottom:none; }
+.b4-thumb {
+  width: clamp(30px,4.2vw,48px); height: clamp(30px,4.2vw,48px);
+  background:linear-gradient(148deg,#F6F4F1,#E8E5E0);
+  border-radius: clamp(5px,.65vw,8px);
+  display:flex; align-items:center; justify-content:center;
+  font-size: clamp(14px,2.2vw,27px); flex-shrink:0;
+}
+.b4-item-mid { flex:1; min-width:0; }
+.b4-bars { display:flex; flex-direction:column; gap:3px; margin-bottom: clamp(4px,.55vw,6px); }
+.b4-bar { height: clamp(5px,.65vw,7.5px); background:#F0F0F0; border-radius:100px; }
+.b4-coupon-chip {
+  display:inline-flex; align-items:center; gap: clamp(4px,.5vw,5.5px);
+  background:#FFF5EF; border:1px solid rgba(232,98,26,.18);
+  border-radius: clamp(4px,.5vw,6px);
+  padding: clamp(2px,.28vw,3.5px) clamp(6px,.8vw,9px) clamp(2px,.28vw,3.5px) clamp(4px,.55vw,6px);
+}
+.b4-save { font-size: clamp(7px,.83vw,9.5px); font-weight:700; color:var(--o); letter-spacing:-.01em; }
+.b4-copy {
+  background:var(--o); color:#fff;
+  font-size: clamp(5.5px,.7vw,8px); font-weight:700;
+  padding: clamp(1.5px,.22vw,2.5px) clamp(5px,.65vw,7.5px);
+  border-radius: clamp(3px,.35vw,4px);
+}
+.b4-item-pr { font-size: clamp(10px,1.25vw,14.5px); font-weight:800; color:var(--ink); flex-shrink:0; letter-spacing:-.03em; }
+
+.b4-cart-total { display:flex; justify-content:space-between; align-items:center; padding: clamp(5px,.65vw,7.5px) clamp(10px,1.4vw,14px); border-top:1px solid #F0F0F0; background:#FAFAFA; }
+.b4-tot-l { font-size: clamp(8px,.88vw,10.5px); font-weight:500; color:var(--gray1); }
+.b4-tot-v { font-size: clamp(10px,1.35vw,16px); font-weight:800; color:var(--ink); letter-spacing:-.03em; }
+.b4-cta {
+  margin: clamp(5px,.65vw,7.5px) clamp(10px,1.4vw,14px) clamp(7px,1vw,12px);
+  background:var(--ink); color:#fff;
+  font-size: clamp(8px,.95vw,11.5px); font-weight:700; text-align:center;
+  padding: clamp(8px,1.05vw,12px); border-radius: clamp(6px,.85vw,9px);
+  letter-spacing:.01em;
+}
+
+
+/* ═══════════════════════════════════════════
+   B A N N E R  5  —  SETUP + PRICING
+═══════════════════════════════════════════ */
+.b5 { background: var(--surf); }
+.b5-left { width:42%; padding:7.5% 4.5% 7.5% 6.5%; display:flex; flex-direction:column; justify-content:center; }
+.b5-eyebrow { font-size: clamp(8px,.9vw,10.5px); font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--gray2); margin-bottom: clamp(14px,1.7vw,20px); }
+.b5-h { font-size: clamp(24px,3.2vw,44px); font-weight:800; letter-spacing:-.04em; line-height:1.04; color:var(--ink); margin-bottom: clamp(26px,3.2vw,38px); }
+.b5-h em { font-style:normal; color:var(--o); }
+.b5-steps { display:flex; flex-direction:column; }
+.b5-step { display:flex; align-items:center; gap: clamp(10px,1.4vw,17px); padding: clamp(7px,1vw,11px) 0; }
+.b5-vl { width:1px; height: clamp(10px,1.3vw,16px); background:var(--gray3); margin-left: clamp(11px,1.5vw,17px); }
+.b5-num {
+  width: clamp(23px,3vw,35px); height: clamp(23px,3vw,35px);
+  border-radius:50%; background:var(--g); color:#fff;
+  font-size: clamp(9px,1.15vw,14px); font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.b5-st { font-size: clamp(10px,1.12vw,13.5px); font-weight:500; color:var(--gray1); letter-spacing:-.01em; }
+.b5-st b { color:var(--ink); font-weight:700; }
+
+.b5-right { width:58%; background:var(--ink); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.b5-right::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 65% 58% at 65% 24%, rgba(232,98,26,.22) 0%, transparent 56%),
+    radial-gradient(ellipse 30% 30% at 12% 82%, rgba(232,98,26,.07) 0%, transparent 50%);
+}
+.b5-card {
+  background:var(--d3); border:1px solid rgba(255,255,255,.05);
+  border-radius: clamp(15px,2.1vw,24px);
+  padding: clamp(26px,3.7vw,48px) clamp(30px,4vw,52px);
+  text-align:center; position:relative; z-index:2; width:62%;
+  box-shadow: 0 32px 80px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.b5-card::before {
+  content:''; position:absolute; top:0; left:18%; right:18%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(232,98,26,.65),transparent);
+}
+.b5-plan-lbl { font-size: clamp(8px,.88vw,10.5px); font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--d6); margin-bottom: clamp(9px,1.2vw,14px); }
+.b5-price { font-size: clamp(52px,7.2vw,96px); font-weight:800; color:var(--o); letter-spacing:-.05em; line-height:.95; margin-bottom:2px; }
+.b5-mo { font-size: clamp(10px,1.15vw,14px); font-weight:500; color:var(--d6); margin-bottom: clamp(18px,2.4vw,28px); letter-spacing:-.01em; }
+.b5-div { height:1px; background:rgba(255,255,255,.05); margin-bottom: clamp(14px,2vw,24px); }
+.b5-feats { display:flex; flex-direction:column; gap: clamp(8px,1.05vw,13px); }
+.b5-feat { display:flex; align-items:center; gap: clamp(9px,1.15vw,14px); font-size: clamp(9px,1.02vw,12.5px); font-weight:500; color:var(--d6); letter-spacing:-.01em; }
+.b5-ck {
+  width: clamp(15px,1.9vw,21px); height: clamp(15px,1.9vw,21px);
+  border-radius:50%; background:var(--g-10); border:1px solid rgba(48,209,88,.24);
+  display:flex; align-items:center; justify-content:center;
+  font-size: clamp(7px,.85vw,10px); color:var(--g); flex-shrink:0;
+}
+
+/* ═══════════════════════════════════════════
+   B A N N E R  6  —  CONDITIONS INCLUDED
+   Concept: The rules inside your Shopify discount
+   sync with the code. Widget shows only where the
+   shopper qualifies. Nothing to configure.
+   Layout: Dark full-bleed. Left = copy + 3 condition
+   pills. Right = Shopify discount card → two live
+   phone states (qualifies / doesn't qualify).
+═══════════════════════════════════════════ */
+
+/* ── Banner shell ── */
+.b6 {
+  background: var(--d1);
+  position: relative;
+  overflow: hidden;
+}
+.b6::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 70% at 72% 50%, rgba(232,98,26,.13) 0%, transparent 58%),
+    radial-gradient(ellipse 30% 30% at 5% 15%,  rgba(232,98,26,.05) 0%, transparent 50%);
+}
+
+/* ── LEFT PANEL ── */
+.b6-left {
+  width: 40%;
+  padding: 0 4% 0 6.5%;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 2;
+}
+
+.b6-eyebrow {
+  font-size: clamp(8px,.9vw,10.5px);
+  font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--o); margin-bottom: clamp(12px,1.5vw,18px);
+}
+
+.b6-h {
+  font-size: clamp(28px,3.8vw,52px);
+  font-weight: 800; letter-spacing: -.045em;
+  line-height: 1.03; color: #fff;
+  margin-bottom: clamp(14px,1.8vw,22px);
+}
+.b6-h em { font-style: normal; color: var(--o); }
+
+.b6-sub {
+  font-size: clamp(11px,1.2vw,14.5px);
+  font-weight: 400; line-height: 1.65;
+  color: var(--gray1); letter-spacing: -.01em;
+  max-width: 285px;
+  margin-bottom: clamp(22px,2.8vw,34px);
+}
+
+/* Condition pills — the 3 rules Klipable reads automatically */
+.b6-pills { display: flex; flex-direction: column; gap: clamp(8px,1.1vw,13px); }
+
+.b6-pill {
+  display: inline-flex; align-items: center; gap: clamp(9px,1.2vw,14px);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: clamp(8px,1.1vw,13px);
+  padding: clamp(9px,1.2vw,14px) clamp(14px,1.8vw,20px);
+  width: fit-content;
+  min-width: clamp(180px,22vw,270px);
+}
+
+.b6-pill-icon {
+  width: clamp(26px,3.2vw,38px); height: clamp(26px,3.2vw,38px);
+  border-radius: clamp(7px,1vw,11px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(12px,1.6vw,18px); flex-shrink: 0;
+}
+.b6-pill-icon.orange { background: var(--o-10); }
+.b6-pill-icon.green  { background: var(--g-10); }
+.b6-pill-icon.blue   { background: rgba(10,132,255,.10); }
+
+.b6-pill-body { display: flex; flex-direction: column; gap: 2px; }
+.b6-pill-name {
+  font-size: clamp(10px,1.15vw,13.5px); font-weight: 700;
+  color: #fff; letter-spacing: -.02em; line-height: 1;
+}
+.b6-pill-desc {
+  font-size: clamp(8px,.9vw,11px); font-weight: 400;
+  color: var(--d6); letter-spacing: -.01em;
+}
+
+.b6-pill-status {
+  margin-left: auto; flex-shrink: 0;
+  font-size: clamp(8px,.85vw,10px); font-weight: 700;
+  letter-spacing: -.01em;
+  padding: clamp(3px,.38vw,4.5px) clamp(8px,1vw,11px);
+  border-radius: 100px;
+}
+.b6-pill-status.synced {
+  background: var(--g-10); color: var(--g);
+  border: 1px solid var(--g-20);
+}
+
+/* ── RIGHT PANEL ── */
+.b6-right {
+  width: 60%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 2;
+  padding: 5% 5% 5% 2%;
+}
+
+.b6-visual {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: clamp(10px,1.4vw,18px);
+}
+
+/* Shopify source card — the discount with its conditions */
+.b6-src-card {
+  background: #fff;
+  border-radius: clamp(10px,1.4vw,16px);
+  border: 1px solid var(--gray4);
+  box-shadow: var(--sh-lift);
+  padding: clamp(12px,1.6vw,20px) clamp(16px,2.1vw,26px);
+  width: 88%;
+  display: flex; align-items: center; gap: clamp(12px,1.6vw,20px);
+}
+
+.b6-src-icon {
+  width: clamp(36px,4.8vw,56px); height: clamp(36px,4.8vw,56px);
+  background: #f6f6f7;
+  border-radius: clamp(8px,1.1vw,13px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(16px,2.2vw,26px); flex-shrink: 0;
+  border: 1px solid var(--gray4);
+}
+
+.b6-src-main { flex: 1; min-width: 0; }
+.b6-src-label {
+  font-size: clamp(7.5px,.85vw,10px); font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: #96BF48; /* Shopify green */ margin-bottom: 3px;
+}
+.b6-src-code {
+  font-size: clamp(13px,1.8vw,21px); font-weight: 800;
+  color: var(--ink); letter-spacing: -.035em; line-height: 1;
+  margin-bottom: clamp(6px,.8vw,9px);
+}
+
+.b6-src-conditions { display: flex; gap: clamp(5px,.7vw,8px); flex-wrap: wrap; }
+.b6-cond-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--gray5); border: 1px solid var(--gray4);
+  border-radius: 100px;
+  padding: clamp(3px,.4vw,5px) clamp(8px,1vw,11px) clamp(3px,.4vw,5px) clamp(6px,.8vw,9px);
+  font-size: clamp(7.5px,.84vw,10px); font-weight: 600;
+  color: var(--gray1); white-space: nowrap; letter-spacing: -.01em;
+}
+.b6-cond-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+/* Sync arrow between source and states */
+.b6-sync-row {
+  display: flex; align-items: center; gap: clamp(6px,.85vw,10px);
+  width: 88%;
+}
+.b6-sync-line {
+  flex: 1; height: 1.5px;
+  background: linear-gradient(to right, rgba(232,98,26,.2), var(--o), rgba(232,98,26,.2));
+}
+.b6-sync-badge {
+  background: var(--o); color: #fff;
+  font-size: clamp(7px,.82vw,9.5px); font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: clamp(4px,.55vw,6.5px) clamp(10px,1.3vw,15px);
+  border-radius: 100px; white-space: nowrap;
+  box-shadow: 0 3px 14px var(--o-28);
+}
+
+/* Two phone states */
+.b6-states {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(10px,1.4vw,18px);
+  width: 88%;
+}
+
+.b6-state { display: flex; flex-direction: column; gap: clamp(6px,.85vw,10px); }
+
+.b6-state-label {
+  display: flex; align-items: center; gap: clamp(5px,.7vw,8px);
+  font-size: clamp(8.5px,.95vw,11.5px); font-weight: 700;
+  letter-spacing: -.02em;
+}
+.b6-state-badge {
+  width: clamp(16px,2vw,22px); height: clamp(16px,2vw,22px);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(7px,.85vw,10px); font-weight: 800; flex-shrink: 0;
+}
+.b6-state-badge.yes { background: var(--g); color: #fff; }
+.b6-state-badge.no  { background: rgba(255,69,58,.15); color: #FF453A; border: 1px solid rgba(255,69,58,.3); }
+.b6-state-title-yes { color: var(--g); }
+.b6-state-title-no  { color: #FF453A; }
+
+/* Mini product card inside each state */
+.b6-mini-card {
+  background: #fff; border-radius: clamp(8px,1.1vw,13px);
+  border: 1px solid var(--gray4);
+  box-shadow: var(--sh-card);
+  overflow: hidden;
+}
+
+.b6-mc-img {
+  width: 100%; aspect-ratio: 16/7;
+  background: linear-gradient(148deg,#F5F3F0,#EAE7E2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(18px,2.6vw,32px); position: relative; overflow: hidden;
+}
+.b6-mc-img::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 35%;
+  background: linear-gradient(to bottom,rgba(255,255,255,.45),transparent);
+}
+
+.b6-mc-body {
+  padding: clamp(7px,1vw,11px) clamp(9px,1.2vw,14px);
+}
+.b6-mc-name {
+  font-size: clamp(8px,.9vw,11px); font-weight: 700;
+  color: var(--ink); margin-bottom: 2px; letter-spacing: -.02em;
+}
+.b6-mc-prices { display: flex; align-items: baseline; gap: clamp(4px,.5vw,6px); margin-bottom: clamp(7px,1vw,11px); }
+.b6-mc-pnew { font-size: clamp(11px,1.55vw,18px); font-weight: 800; color: var(--o); letter-spacing: -.04em; }
+.b6-mc-pold { font-size: clamp(8px,.9vw,11px); font-weight: 500; color: var(--gray2); text-decoration: line-through; }
+
+/* Cart qualifier tag */
+.b6-cart-tag {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--gray5); border-radius: clamp(5px,.65vw,7px);
+  padding: clamp(4px,.55vw,6.5px) clamp(7px,.95vw,11px);
+  margin-bottom: clamp(6px,.85vw,10px);
+  font-size: clamp(8px,.9vw,10.5px); font-weight: 600;
+  color: var(--gray1); letter-spacing: -.01em;
+}
+.b6-cart-tag-val {
+  font-weight: 800; color: var(--ink);
+  font-size: clamp(9px,1.05vw,12px); letter-spacing: -.02em;
+}
+.b6-cart-qual-yes { color: var(--g); font-weight: 700; }
+.b6-cart-qual-no  { color: #FF453A; font-weight: 700; }
+
+/* Widget visible state */
+.b6-widget-visible {
+  background: #fff8f4;
+  border: 1.5px solid rgba(232,98,26,.22);
+  border-radius: clamp(6px,.85vw,9px);
+  padding: clamp(7px,1vw,11px) clamp(9px,1.2vw,13px);
+  box-shadow: 0 3px 12px rgba(232,98,26,.14), 0 8px 22px rgba(0,0,0,.08);
+}
+.b6-wv-row { display: flex; align-items: center; gap: clamp(4px,.55vw,7px); }
+.b6-wv-badge {
+  background: var(--o); color: #fff;
+  font-size: clamp(6px,.75vw,8.5px); font-weight: 700;
+  padding: clamp(2px,.3vw,3.5px) clamp(9px,1.2vw,13px) clamp(2px,.3vw,3.5px) clamp(6px,.85vw,9px);
+  border-radius: 2px;
+  clip-path: polygon(0 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,0 100%);
+  flex-shrink: 0;
+}
+.b6-wv-check {
+  width: clamp(12px,1.5vw,17px); height: clamp(12px,1.5vw,17px);
+  border-radius: 50%; background: var(--g);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(6px,.75vw,9px); color: #fff; font-weight: 800; flex-shrink: 0;
+}
+.b6-wv-t {
+  font-size: clamp(8px,.95vw,11px); font-weight: 600;
+  color: var(--ink); letter-spacing: -.01em;
+}
+.b6-wv-t span { color: var(--g); }
+
+/* Widget hidden state */
+.b6-widget-hidden {
+  background: var(--gray5); border: 1.5px dashed var(--gray3);
+  border-radius: clamp(6px,.85vw,9px);
+  padding: clamp(7px,1vw,11px) clamp(9px,1.2vw,13px);
+  display: flex; align-items: center; justify-content: center; gap: clamp(6px,.85vw,10px);
+}
+.b6-wh-icon {
+  font-size: clamp(11px,1.4vw,16px); opacity: .4;
+}
+.b6-wh-t {
+  font-size: clamp(8px,.9vw,10.5px); font-weight: 600;
+  color: var(--gray2); letter-spacing: -.01em;
+}
+
+/* ═══════════════════════════════════════════
+   LISTING COPY SECTION
+═══════════════════════════════════════════ */
+.copy-wrap { margin-top:80px; }
+.copy-block { background:var(--d2); border:1px solid var(--d3); border-radius:13px; overflow:hidden; margin-bottom:13px; }
+.cb-hdr { background:var(--d3); padding:12px 19px; border-bottom:1px solid var(--d4); display:flex; align-items:center; gap:10px; }
+.cb-n { width:20px; height:20px; background:var(--o); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9.5px; font-weight:700; color:#fff; flex-shrink:0; }
+.cb-t { font-size:11.5px; font-weight:600; color:var(--d6); letter-spacing:-.01em; }
+.cb-body { padding:18px 20px; }
+.cb-txt { font-size:14.5px; color:rgba(255,255,255,.72); line-height:1.67; letter-spacing:-.01em; }
+.cb-txt.hero { font-size:21px; font-weight:800; color:#fff; letter-spacing:-.04em; }
+.cb-buls { display:flex; flex-direction:column; gap:10px; }
+.cb-bul { display:flex; align-items:flex-start; gap:11px; font-size:13.5px; color:var(--gray1); line-height:1.46; letter-spacing:-.01em; }
+.cb-dot { width:5px; height:5px; border-radius:50%; background:var(--o); margin-top:7px; flex-shrink:0; }
+.cb-note { margin-top:13px; padding:10px 14px; background:rgba(232,98,26,.07); border-left:2px solid var(--o); border-radius:3px; font-size:10.5px; color:var(--d6); line-height:1.56; letter-spacing:-.01em; }
+</style>
+</head>
+<body>
+
+<p class="pg-eyebrow">App Store Asset Kit — v4</p>
+<h1 class="pg-h">Klipable <b>Banners</b></h1>
+
+
+<!-- ═══════════ BANNER 1 ═══════════ -->
+<div class="sec">
+  <div class="sec-lbl">Image 1 — Hero</div>
+
+  <div class="banner b1">
+
+    <!-- LEFT — warm white, copy -->
+    <div class="b1-left">
+      <div class="b1-chip">
+        <div class="b1-chip-dot">K</div>
+        <span class="b1-chip-t">Amazon-Style Coupon Widgets</span>
+      </div>
+      <h2 class="b1-h">Your discounts.<br>Visible before<br>they <em>leave.</em></h2>
+      <p class="b1-sub">Auto-syncs your Shopify discount codes and shows them on your product page — right before shoppers walk away.</p>
+      <div class="b1-live">
+        <div class="b1-dot"></div>
+        <span class="b1-live-t">Syncing from Shopify</span>
+      </div>
+    </div>
+
+    <!-- RIGHT — dark panel, browser frame + escaping widget -->
+    <div class="b1-right">
+
+      <div class="b1-frame-wrap">
+
+        <!-- Browser window frame -->
+        <div class="b1-browser">
+          <!-- Three dots titlebar -->
+          <div class="b1-dots-bar">
+            <div class="b1-dot-c" style="background:#FF5F57"></div>
+            <div class="b1-dot-c" style="background:#FFBD2E"></div>
+            <div class="b1-dot-c" style="background:#28C840"></div>
+          </div>
+
+          <!-- Screen: product image | thumbnails -->
+          <div class="b1-screen">
+            <div class="b1-screen-main">
+              <!-- Product image -->
+              <div class="b1-prod-img-area">
+                <div class="b1-shoe">👟</div>
+              </div>
+              <!-- Product info -->
+              <div class="b1-prod-info">
+                <div class="b1-prod-name">Nike Air Max 270</div>
+                <div class="b1-prices">
+                  <span class="b1-price-green">$76.99</span>
+                  <span class="b1-price-old">$95.99</span>
+                </div>
+                <div class="b1-stars">
+                  <span class="b1-star">★</span><span class="b1-star">★</span>
+                  <span class="b1-star">★</span><span class="b1-star">★</span><span class="b1-star">★</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Thumbnail strip — right side -->
+            <div class="b1-thumbs">
+              <div class="b1-thumb">👟</div>
+              <div class="b1-thumb active">👟</div>
+              <div class="b1-thumb">👟</div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+          THE WIDGET — ESCAPES the browser frame.
+          margin: 0 negative bleeds wider than frame.
+          box-shadow casts onto dark background.
+          Exact Coupon Clip widget from screenshot.
+        -->
+        <div class="b1-widget-escape">
+          <!-- Coupon row: orange badge + green radio check + applied text -->
+          <div class="b1-coupon-row">
+            <div class="b1-coupon-tag">Coupon:</div>
+            <div class="b1-coupon-applied">
+              <div class="b1-green-check"></div>
+              <span class="b1-applied-text">20% off coupon applied</span>
+            </div>
+          </div>
+
+          <!-- Timer strip -->
+          <div class="b1-timer-strip">
+            <span class="b1-timer-icon">⏰</span>
+            <span class="b1-timer-text">Hurry—coupon expires in:</span>
+            <span class="b1-timer-chip">4hrs</span>
+            <span class="b1-timer-chip">58m</span>
+            <span class="b1-timer-chip">20s</span>
+          </div>
+
+          <!-- Add to Cart -->
+          <div class="b1-atc">
+            <span class="b1-atc-icon">🛒</span>
+            Add to Cart
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note">
+      <div class="nl">Widget escape technique</div>
+      <p class="nt">The widget lives <b>outside</b> the phone's overflow boundary. Its shadow is cast on the dark background, not clipped by the phone. Eye goes straight to it. <b>Same technique Klip uses</b> — now executed with orange-tinted shadow for brand cohesion.</p>
+    </div>
+    <div class="note">
+      <div class="nl">Applied state = confidence</div>
+      <p class="nt">Widget shows <b>coupon already applied</b> (green check) + countdown timer. Merchant reads: "my customer saw this deal before leaving." Shows outcome, not just a feature.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════ BANNER 2 ═══════════ -->
+<div class="sec">
+  <div class="sec-lbl">Image 2 — 3 Widget Styles (full phone mockups, zero dead space)</div>
+
+  <div class="banner b2">
+
+    <div class="b2-top">
+      <h2 class="b2-h">3 ways to show<br>your <em>deals.</em></h2>
+      <p class="b2-sub">Pick the style your store needs.<br>Switch any time.</p>
+    </div>
+
+    <div class="b2-grid">
+
+      <!-- CARD 1: Coupon Clip — matches screenshot: "Offers" label, orange badge, checkbox, text, Read more -->
+      <div class="b2-card">
+        <div class="b2-card-name">Coupon Clip</div>
+        <div class="mini-phone">
+          <div class="mp-bar">
+            <div class="mp-dot" style="background:#FF5F57"></div>
+            <div class="mp-dot" style="background:#FFBD2E"></div>
+            <div class="mp-dot" style="background:#28C840"></div>
+          </div>
+          <div class="mp-img"><div class="mp-emoji">👟</div></div>
+          <div class="mp-info">
+            <div class="mp-name">Air Max 270</div>
+            <div class="mp-prices"><span class="mp-new">$76.99</span><span class="mp-old">$95.99</span></div>
+          </div>
+          <!-- Widget 1: exact screenshot match -->
+          <div class="mp-widget w1">
+            <div class="wg1-header">Offers</div>
+            <div class="wg1-row">
+              <div class="wg1-badge">Coupon:</div>
+              <div class="wg1-cb"></div>
+              <div class="wg1-t">Apply FREE order discount</div>
+            </div>
+            <div class="wg1-readmore">Read more</div>
+          </div>
+        </div>
+        <div class="b2-tagline">Amazon's checkout pattern. Instant trust.</div>
+      </div>
+
+      <!-- CARD 2: Offers Carousel — matches screenshot: % dashed icon, FREE card with code + requirement -->
+      <div class="b2-card">
+        <div class="b2-card-name">Offers Carousel</div>
+        <div class="mini-phone">
+          <div class="mp-bar">
+            <div class="mp-dot" style="background:#FF5F57"></div>
+            <div class="mp-dot" style="background:#FFBD2E"></div>
+            <div class="mp-dot" style="background:#28C840"></div>
+          </div>
+          <div class="mp-img"><div class="mp-emoji">⌚</div></div>
+          <div class="mp-info">
+            <div class="mp-name">Apple Watch Ultra</div>
+            <div class="mp-prices"><span class="mp-new">$379.00</span><span class="mp-old">$459.00</span></div>
+          </div>
+          <!-- Widget 2: exact screenshot match -->
+          <div class="mp-widget w2">
+            <div class="wg2-hdr">
+              <div class="wg2-icon">%</div>
+              <div class="wg2-ht">Offers</div>
+            </div>
+            <div class="wg2-scroll-wrap">
+              <div class="wg2-arr">‹</div>
+              <div class="wg2-card">
+                <div class="wg2-free">FREE <span>(100% off)</span></div>
+                <div class="wg2-coupon-row">
+                  <span class="wg2-coupon-lbl">Coupon:</span>
+                  <span class="wg2-coupon-code">WAQHTJ8RC4EC</span>
+                  <div class="wg2-copy-icon">⧉</div>
+                </div>
+                <div class="wg2-req">Requirement: Spend $105 or more</div>
+              </div>
+              <div class="wg2-arr">›</div>
+            </div>
+          </div>
+        </div>
+        <div class="b2-tagline">All deals. Shoppers pick their best one.</div>
+      </div>
+
+      <!-- CARD 3: Deal Spotlight — matches screenshot: WOW!DEAL circle, $0.00 / $105.00 strike, green italic desc, chevron -->
+      <div class="b2-card">
+        <div class="b2-card-name">Deal Spotlight</div>
+        <div class="mini-phone">
+          <div class="mp-bar">
+            <div class="mp-dot" style="background:#FF5F57"></div>
+            <div class="mp-dot" style="background:#FFBD2E"></div>
+            <div class="mp-dot" style="background:#28C840"></div>
+          </div>
+          <div class="mp-img"><div class="mp-emoji">💎</div></div>
+          <div class="mp-info">
+            <div class="mp-name">Diamond Ring</div>
+            <div class="mp-prices"><span class="mp-new">$0.00</span><span class="mp-old">$105.00</span></div>
+          </div>
+          <!-- Widget 3: exact screenshot match -->
+          <div class="mp-widget w3">
+            <div class="wg3-card">
+              <div class="wg3-wow-circle">
+                <div class="wg3-wow-t">WOW!<br>DEAL</div>
+              </div>
+              <div class="wg3-body">
+                <div class="wg3-price-row">
+                  <span class="wg3-pnew">$0.00</span>
+                  <span class="wg3-pold">$105.00</span>
+                </div>
+                <div class="wg3-desc">Coupon: <b>WAQHTJ8RC4EC</b> (Get $105+ - Get 1 Item FREE)</div>
+              </div>
+              <div class="wg3-chevron">∨</div>
+            </div>
+          </div>
+        </div>
+        <div class="b2-tagline">Biggest saving. Front and centre.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note">
+      <div class="nl">Dead space fix</div>
+      <p class="nt">Product image now uses <b>flex:1</b> — it expands to fill whatever height remains after the fixed elements. Zero dead space regardless of card height. Tested at all viewport widths.</p>
+    </div>
+    <div class="note">
+      <div class="nl">Widget elevated in context</div>
+      <p class="nt">Each widget has an <b>orange-tinted shadow</b> inside the mini phone — same visual hierarchy as Banner 1 at micro scale. Your eye finds the widget in every card immediately.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════ BANNER 3 ═══════════ -->
+<div class="sec">
+  <div class="sec-lbl">Image 3 — The Sync Differentiator</div>
+
+  <div class="banner b3">
+    <div class="b3-left">
+      <div class="b3-eyebrow">Zero duplicate work</div>
+      <h2 class="b3-h">Already in Shopify.<em>Already done.</em></h2>
+      <p class="b3-sub">Your existing discount codes sync automatically. Nothing to rebuild. Nothing managed in two places.</p>
+    </div>
+    <div class="b3-mid">
+      <div class="b3-arrow">
+        <div class="b3-arr-line"></div>
+        <div class="b3-arr-pill">Auto-sync</div>
+        <div class="b3-arr-head"></div>
+      </div>
+    </div>
+    <div class="b3-right">
+      <div class="b3-panels">
+        <div class="b3-panel">
+          <div class="b3-ph sp"><div class="b3-ph-dot" style="background:#96BF48"></div>Shopify Discounts</div>
+          <div class="b3-pb">
+            <div class="b3-row"><span class="b3-code">SAVE20</span><span class="b3-type">% off order</span></div>
+            <div class="b3-row"><span class="b3-code">FREESHIP</span><span class="b3-type">Free shipping</span></div>
+            <div class="b3-row"><span class="b3-code">BOGO50</span><span class="b3-type">Buy X Get Y</span></div>
+          </div>
+        </div>
+        <div class="b3-panel">
+          <div class="b3-ph kl"><div class="b3-ph-dot" style="background:var(--o)"></div>On your store</div>
+          <div class="b3-pb">
+            <div class="b3-wrow"><div class="b3-wbdg">Coupon:</div><span class="b3-wcode">SAVE20</span><span class="b3-wval">20% off</span></div>
+            <div class="b3-wrow"><div class="b3-wbdg">Coupon:</div><span class="b3-wcode">FREESHIP</span><span class="b3-wval">Free</span></div>
+            <div class="b3-wrow"><div class="b3-wbdg">Coupon:</div><span class="b3-wcode">BOGO50</span><span class="b3-wval">B1G1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><div class="nl">Same codes both panels</div><p class="nt"><b>SAVE20, FREESHIP, BOGO50</b> appear identically on both sides. Merchant scans left→right and understands "sync" without reading a word.</p></div>
+    <div class="note"><div class="nl">The impossible image</div><p class="nt">Klip cannot make this banner honestly. They require merchants to rebuild discounts inside their system. This side-by-side is <b>uniquely yours</b>.</p></div>
+  </div>
+</div>
+
+
+<!-- ═══════════ BANNER 4 ═══════════ -->
+<div class="sec">
+  <div class="sec-lbl">Image 4 — Cart + Collection</div>
+
+  <div class="banner b4">
+    <div class="b4-top">
+      <h2 class="b4-h">Catch them browsing.<br>Catch them at<br>the <em>cart.</em></h2>
+      <div class="b4-assist">
+        <div class="b4-at">Cart & Collection</div>
+        <div class="b4-as">Assisted setup — our team handles placement for you.</div>
+      </div>
+    </div>
+    <div class="b4-screens">
+
+      <!-- COLLECTION -->
+      <div class="b4-mock">
+        <div class="b4-topbar">
+          <div style="display:flex;gap:4px">
+            <div class="b4-dot" style="background:#FF5F57"></div>
+            <div class="b4-dot" style="background:#FFBD2E"></div>
+            <div class="b4-dot" style="background:#28C840"></div>
+          </div>
+        </div>
+        <div class="b4-pg-tag"><div class="b4-pg-dot"></div><span class="b4-pg-t">Collection Page</span></div>
+        <div class="b4-coll-grid">
+          <div class="b4-ci">
+            <div class="b4-ci-img">👕<div class="b4-ci-badge">Get 20% off</div></div>
+            <div class="b4-ci-inf"><div class="b4-ci-nm">Classic Polo</div><div><span class="b4-ci-pr">$38</span><span class="b4-ci-op">$49</span></div></div>
+          </div>
+          <div class="b4-ci">
+            <div class="b4-ci-img">👟<div class="b4-ci-badge">Free Ship</div></div>
+            <div class="b4-ci-inf"><div class="b4-ci-nm">Air Max 270</div><div><span class="b4-ci-pr">$89</span><span class="b4-ci-op">$99</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CART -->
+      <div class="b4-mock">
+        <div class="b4-topbar">
+          <div style="display:flex;gap:4px">
+            <div class="b4-dot" style="background:#FF5F57"></div>
+            <div class="b4-dot" style="background:#FFBD2E"></div>
+            <div class="b4-dot" style="background:#28C840"></div>
+          </div>
+        </div>
+        <div class="b4-pg-tag"><div class="b4-pg-dot"></div><span class="b4-pg-t">Cart Page</span></div>
+        <div class="b4-cart-body">
+          <div class="b4-ci2">
+            <div class="b4-thumb">👟</div>
+            <div class="b4-item-mid">
+              <div class="b4-bars"><div class="b4-bar" style="width:68%"></div><div class="b4-bar" style="width:46%"></div></div>
+              <div class="b4-coupon-chip"><span class="b4-save">Save 25%</span><span class="b4-copy">Clip Coupon</span></div>
+            </div>
+            <div class="b4-item-pr">$22.99</div>
+          </div>
+          <div class="b4-ci2">
+            <div class="b4-thumb">👕</div>
+            <div class="b4-item-mid">
+              <div class="b4-bars"><div class="b4-bar" style="width:72%"></div><div class="b4-bar" style="width:54%"></div></div>
+              <div class="b4-coupon-chip"><span class="b4-save">Free Shipping</span><span class="b4-copy">Clip Coupon</span></div>
+            </div>
+            <div class="b4-item-pr">$17.00</div>
+          </div>
+        </div>
+        <div class="b4-cart-total"><span class="b4-tot-l">Total</span><span class="b4-tot-v">$39.99</span></div>
+        <div class="b4-cta">Checkout →</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><div class="nl">Klip-quality mockups</div><p class="nt">Collection badge <b>bottom-pinned on product image</b> — exact Klip layout, Klipable orange. Cart shows per-item coupon chip. Both feel production-real with no hand-drawn arrows.</p></div>
+    <div class="note"><div class="nl">Assisted setup reframed</div><p class="nt">Small top-right note reframes the limitation as a service. Merchant reads: <b>"their team handles it for me"</b> — not "it doesn't work automatically."</p></div>
+  </div>
+</div>
+
+
+<!-- ═══════════ BANNER 5 ═══════════ -->
+<div class="sec">
+  <div class="sec-lbl">Image 5 — Setup + Pricing</div>
+
+  <div class="banner b5">
+    <div class="b5-left">
+      <div class="b5-eyebrow">Ready in minutes</div>
+      <h2 class="b5-h">3 clicks.<br><em>$9.99</em> flat.<br>No limits.</h2>
+      <div class="b5-steps">
+        <div class="b5-step"><div class="b5-num">✓</div><div class="b5-st"><b>Enable</b> app embed</div></div>
+        <div class="b5-vl"></div>
+        <div class="b5-step"><div class="b5-num">✓</div><div class="b5-st"><b>Add</b> widget to product page</div></div>
+        <div class="b5-vl"></div>
+        <div class="b5-step"><div class="b5-num">✓</div><div class="b5-st"><b>Discounts go live</b> automatically</div></div>
+      </div>
+    </div>
+    <div class="b5-right">
+      <div class="b5-card">
+        <div class="b5-plan-lbl">One plan. Everything included.</div>
+        <div class="b5-price">$9.99</div>
+        <div class="b5-mo">per month</div>
+        <div class="b5-div"></div>
+        <div class="b5-feats">
+          <div class="b5-feat"><div class="b5-ck">✓</div>Unlimited coupons</div>
+          <div class="b5-feat"><div class="b5-ck">✓</div>Unlimited redemptions</div>
+          <div class="b5-feat"><div class="b5-ck">✓</div>All 3 widget styles</div>
+          <div class="b5-feat"><div class="b5-ck">✓</div>No caps. Ever.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><div class="nl">$9.99 dominates the frame</div><p class="nt">Font size is intentionally maximised. A merchant who just left <b>Klip's $59.99/month</b> unlimited plan sees this and installs immediately.</p></div>
+    <div class="note"><div class="nl">All steps pre-ticked</div><p class="nt">Done state removes anxiety. Reads as: <b>"it's already been figured out — you just need to click."</b> Green = success. Orange = brand. The contrast is intentional.</p></div>
+  </div>
+</div>
+
+
+<!-- ═══════════ BANNER 6 ═══════════ -->
+<div class="sec">
+  <div class="sec-lbl">Image 6 — Smart Sync: Conditions Included</div>
+
+  <div class="banner b6">
+
+    <!-- LEFT: copy + 3 condition pills -->
+    <div class="b6-left">
+      <div class="b6-eyebrow">Smart Sync</div>
+      <h2 class="b6-h">Conditions<br><em>included.</em></h2>
+      <p class="b6-sub">Every rule inside your Shopify discount — minimums, date windows, usage limits — syncs with the code. Klipable reads them. The widget shows only where your shopper qualifies. Nothing to configure.</p>
+
+      <div class="b6-pills">
+        <div class="b6-pill">
+          <div class="b6-pill-icon orange">📅</div>
+          <div class="b6-pill-body">
+            <div class="b6-pill-name">Date Window</div>
+            <div class="b6-pill-desc">Start & end dates honoured</div>
+          </div>
+          <div class="b6-pill-status synced">Synced</div>
+        </div>
+        <div class="b6-pill">
+          <div class="b6-pill-icon green">🛒</div>
+          <div class="b6-pill-body">
+            <div class="b6-pill-name">Min. Purchase</div>
+            <div class="b6-pill-desc">Shows only when cart qualifies</div>
+          </div>
+          <div class="b6-pill-status synced">Synced</div>
+        </div>
+        <div class="b6-pill">
+          <div class="b6-pill-icon blue">🔢</div>
+          <div class="b6-pill-body">
+            <div class="b6-pill-name">Usage Cap</div>
+            <div class="b6-pill-desc">Hides when limit is reached</div>
+          </div>
+          <div class="b6-pill-status synced">Synced</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Shopify source card → sync arrow → two phone states -->
+    <div class="b6-right">
+      <div class="b6-visual">
+
+        <!-- Shopify discount source card -->
+        <div class="b6-src-card">
+          <div class="b6-src-icon">🏷️</div>
+          <div class="b6-src-main">
+            <div class="b6-src-label">Shopify Discount</div>
+            <div class="b6-src-code">SAVE20</div>
+            <div class="b6-src-conditions">
+              <div class="b6-cond-tag"><div class="b6-cond-dot" style="background:#96BF48"></div>20% off</div>
+              <div class="b6-cond-tag"><div class="b6-cond-dot" style="background:#FF9500"></div>Min. $50</div>
+              <div class="b6-cond-tag"><div class="b6-cond-dot" style="background:#0A84FF"></div>Ends Dec 31</div>
+              <div class="b6-cond-tag"><div class="b6-cond-dot" style="background:#BF5AF2"></div>500 uses max</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sync arrow -->
+        <div class="b6-sync-row">
+          <div class="b6-sync-line"></div>
+          <div class="b6-sync-badge">Klipable reads all conditions</div>
+          <div class="b6-sync-line"></div>
+        </div>
+
+        <!-- Two states -->
+        <div class="b6-states">
+
+          <!-- STATE 1: Qualifies — widget visible -->
+          <div class="b6-state">
+            <div class="b6-state-label">
+              <div class="b6-state-badge yes">✓</div>
+              <span class="b6-state-title-yes">Widget appears</span>
+            </div>
+            <div class="b6-mini-card">
+              <div class="b6-mc-img">👟</div>
+              <div class="b6-mc-body">
+                <div class="b6-mc-name">Nike Air Max 270</div>
+                <div class="b6-mc-prices">
+                  <span class="b6-mc-pnew">$76.99</span>
+                  <span class="b6-mc-pold">$95.99</span>
+                </div>
+                <!-- Cart qualifier -->
+                <div class="b6-cart-tag">
+                  Cart total
+                  <span class="b6-cart-tag-val">$65.00 <span class="b6-cart-qual-yes">✓ Meets $50 min</span></span>
+                </div>
+                <!-- Widget visible -->
+                <div class="b6-widget-visible">
+                  <div class="b6-wv-row">
+                    <div class="b6-wv-badge">Coupon:</div>
+                    <div class="b6-wv-check">✓</div>
+                    <span class="b6-wv-t"><span>20% off</span> applied</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATE 2: Doesn't qualify — widget hidden -->
+          <div class="b6-state">
+            <div class="b6-state-label">
+              <div class="b6-state-badge no">✕</div>
+              <span class="b6-state-title-no">Widget stays hidden</span>
+            </div>
+            <div class="b6-mini-card">
+              <div class="b6-mc-img">👕</div>
+              <div class="b6-mc-body">
+                <div class="b6-mc-name">Classic Polo</div>
+                <div class="b6-mc-prices">
+                  <span class="b6-mc-pnew">$28.00</span>
+                  <span class="b6-mc-pold">$35.00</span>
+                </div>
+                <!-- Cart qualifier -->
+                <div class="b6-cart-tag">
+                  Cart total
+                  <span class="b6-cart-tag-val">$28.00 <span class="b6-cart-qual-no">✕ Below $50 min</span></span>
+                </div>
+                <!-- Widget hidden -->
+                <div class="b6-widget-hidden">
+                  <div class="b6-wh-icon">🚫</div>
+                  <span class="b6-wh-t">Coupon not shown</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notes">
+    <div class="note">
+      <div class="nl">Copy is the flip on Klip</div>
+      <p class="nt">Klip's banner says "Set Maximum Discount Uses", "Set Min Purchase Requirements" — all setup work. <b>Klipable's headline is "Conditions included."</b> Nothing to set. Already done. That's the entire argument in 2 words.</p>
+    </div>
+    <div class="note">
+      <div class="nl">The two-state visual</div>
+      <p class="nt">Showing <b>the same kind of product page in two states</b> — widget visible vs hidden — proves the logic is live and contextual. No merchant needs a caption to understand "it shows when it should, and hides when it shouldn't."</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════ LISTING COPY ═══════════ -->
+<div class="copy-wrap">
+  <div class="sec-lbl">Listing Copy — Paste Ready</div>
+
+  <div class="copy-block">
+    <div class="cb-hdr"><div class="cb-n">1</div><div class="cb-t">App Title</div></div>
+    <div class="cb-body"><div class="cb-txt hero">Klipable: Amazon-Style Coupon Widgets</div><div class="cb-note">Both "Amazon-style coupon" and "product page coupons" are in the title — the two phrases merchants search. Don't shorten it.</div></div>
+  </div>
+
+  <div class="copy-block">
+    <div class="cb-hdr"><div class="cb-n">2</div><div class="cb-t">Description</div></div>
+    <div class="cb-body"><div class="cb-txt">Your discounts are already in Shopify. Klipable just makes them visible.<br><br>It auto-syncs your active discount codes and displays them as Amazon-style coupon widgets on your product and cart pages — so shoppers see the deal before they leave. No rebuilding. No copy-pasting. No theme edits.<br><br>Choose from 3 widget styles. One flat price. Unlimited everything.</div></div>
+  </div>
+
+  <div class="copy-block">
+    <div class="cb-hdr"><div class="cb-n">3</div><div class="cb-t">Bullet Points</div></div>
+    <div class="cb-body">
+      <div class="cb-buls">
+        <div class="cb-bul"><div class="cb-dot"></div><span>Syncs your existing Shopify discounts — zero rebuilding in another tool</span></div>
+        <div class="cb-bul"><div class="cb-dot"></div><span>3 widget styles: Coupon Clip, Offers Carousel & Deal Spotlight</span></div>
+        <div class="cb-bul"><div class="cb-dot"></div><span>Shows on product pages, cart & collection pages — full store coverage</span></div>
+        <div class="cb-bul"><div class="cb-dot"></div><span>$9.99/month flat — unlimited coupons, unlimited redemptions, no caps</span></div>
+        <div class="cb-bul"><div class="cb-dot"></div><span>3-click setup — live in under 5 minutes, zero coding needed</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
